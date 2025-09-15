@@ -2,7 +2,7 @@
     //pass in just the context as a $(obj) or a settings JS object
     $.fn.autogrow = function(opts) {
         var that = $(this).css({overflow: 'hidden', resize: 'none'}) //prevent scrollies
-            , selector = that.selector
+            , selector = this.selector || null, 
             , defaults = {
                 context: $(document) //what to wire events to
                 , animate: true //if you want the size change to animate
@@ -44,10 +44,13 @@
                 resize.call(elem[0]);
             }
         });
-        opts.context
-            .on('keyup paste', selector, resize)
-        ;
-    
+
+        if (selector) {
+            opts.context.on('keyup paste', selector, resize);            
+        } else {            
+            that.on('keyup paste', resize);
+        }
+        
         function resize (e){
             var box = $(this)
                 , oldHeight = box.innerHeight()
